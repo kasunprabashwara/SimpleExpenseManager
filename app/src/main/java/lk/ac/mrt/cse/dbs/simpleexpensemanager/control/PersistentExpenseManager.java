@@ -15,6 +15,7 @@ public class PersistentExpenseManager extends ExpenseManager {
         setTransactionsDAO(PersistentTransactionDAO);
 
         AccountDAO PersistentAccountDAO = new PersistentAccountDAO();
+        PersistentAccountDAO.loadValues();  //try to remove this
         setAccountsDAO(PersistentAccountDAO);
 
         // dummy data
