@@ -56,4 +56,9 @@ public class InMemoryTransactionDAO implements TransactionDAO {
         return transactions.subList(size - limit, size);
     }
 
+    @Override
+    public void loadValues() {
+
+    }
+
 }

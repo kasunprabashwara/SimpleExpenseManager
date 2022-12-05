@@ -1,12 +1,13 @@
 package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,11 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 
 
+
 public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO {
     private final Map<String, Account> accounts;    //temp variable
-    public PersistentAccountDAO() {
-        super(null,"appDatabase",null, 1);
+    public PersistentAccountDAO(Context context) {
+        super(context,"ppDatabase",null, 1);
         this.accounts = new HashMap<>(); //these are temp step
 
     }
@@ -47,7 +49,7 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createStatement="create table accounts(accountNo text primary key, bankName text, accountHolderName text,balance real)";
+        String createStatement="create table account(accountNo text primary key, bankName text, accountHolderName text,balance real)";
         sqLiteDatabase.execSQL(createStatement);
     }
 
