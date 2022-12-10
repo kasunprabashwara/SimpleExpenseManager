@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.DBHelper;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.exception.InvalidAccountException;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
@@ -19,42 +20,13 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 
 
 
-public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO {
-    private final Map<String, Account> accounts;    //temp variable
-    public PersistentAccountDAO(Context context) {
-        super(context,"ppDatabase",null, 1);
-        this.accounts = new HashMap<>(); //these are temp step
+public class PersistentAccountDAO implements AccountDAO {
+    private final Map<String, Account> accounts;
+    private DBHelper dbHelper;
+    public PersistentAccountDAO(DBHelper dbHelper) {
+        this.dbHelper=dbHelper;
+        this.accounts =dbHelper.getInitialAccounts();
 
-    }
-
-    @Override
-    public void loadValues() {
-        SQLiteDatabase db=getReadableDatabase();
-        Cursor cursor=db.rawQuery("select * from account",null);
-        Account acc;
-        String accNo;
-        String bankName;
-        String holName;
-        Double bal;
-        while(cursor.moveToNext()){
-            accNo=cursor.getString(0);
-            bankName=cursor.getString(1);
-            holName=cursor.getString(2);
-            bal=cursor.getDouble(3);
-            acc=new Account(accNo,bankName,holName,bal);
-            accounts.put(accNo,acc);
-        }
-        db.close();
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createStatement="create table account(accountNo text primary key, bankName text, accountHolderName text,balance real)";
-        sqLiteDatabase.execSQL(createStatement);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
 
     @Override
@@ -79,14 +51,7 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
     @Override
     public void addAccount(Account account) {
         accounts.put(account.getAccountNo(), account);
-        SQLiteDatabase db=getWritableDatabase();
-        ContentValues cv=new ContentValues();
-        cv.put("accountNo",account.getAccountNo());
-        cv.put("bankName",account.getBankName());
-        cv.put("accountHolderName",account.getAccountHolderName());
-        cv.put("balance",account.getBalance());
-        db.insert("account",null,cv);
-        db.close();
+        dbHelper.insertAccounts(account);
     }
 
     @Override
@@ -96,10 +61,7 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
             throw new InvalidAccountException(msg);
         }
         accounts.remove(accountNo);
-        SQLiteDatabase db=getWritableDatabase();
-        String where="accountNo"+accountNo;
-        db.delete("account",where,null);
-        db.close();
+        dbHelper.deleteAccounts(accountNo);
     }
 
     @Override
@@ -119,12 +81,7 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
                 break;
         }
         accounts.put(accountNo, account);
-        SQLiteDatabase db=getWritableDatabase();
-        ContentValues cv=new ContentValues();
-        String where="accountNo="+accountNo;
-        cv.put("balance",account.getBalance());
-        db.update("account",cv,where,null);
-        db.close();
+        dbHelper.updateAccounts(account);
     }
 
 }

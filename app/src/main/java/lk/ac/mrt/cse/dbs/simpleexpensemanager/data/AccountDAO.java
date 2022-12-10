@@ -80,5 +80,4 @@ public interface AccountDAO {
      */
     public void updateBalance(String accountNo, ExpenseType expenseType, double amount) throws InvalidAccountException;
 
-    void loadValues();
 }
