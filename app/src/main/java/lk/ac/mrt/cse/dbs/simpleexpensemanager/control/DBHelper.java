@@ -22,7 +22,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
 public class DBHelper extends SQLiteOpenHelper {
     private final SimpleDateFormat format;
     public DBHelper(@Nullable Context context) {
-        super(context,"appDatabase",null,1);
+        super(context,"200645J",null,1);
         this.format=new SimpleDateFormat("yyyy/MM/dd");
     }
 
